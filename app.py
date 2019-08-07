@@ -14,7 +14,7 @@ app = Flask(__name__)
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # 輸入想要追蹤的網址，可以增加或刪除
-site = ['https://onejav.com/new']
+site = ['www.google.com.tw']
 
 message = ''
 access_token = ''
@@ -30,6 +30,7 @@ def run():
 
     params = {'grant_type' : 'authorization_code',
               'code' : code,
+              #'redirect_uri': 'http://2616e35d.ngrok.io',
               'redirect_uri' : 'https://website-line-notify.herokuapp.com/',
               'client_id' : 'zj06EeRm09yneWM35OqLGU',
               'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
@@ -39,13 +40,14 @@ def run():
     data = r.json()
     access_token = data['access_token'];
     print(access_token)
-
+    msg = "Success registered"
+    lineNotifyMessage(access_token, msg)
     return render_template('success.html')
 
 
-def lineNotifyMessage(token, msg):
+def lineNotifyMessage(access_token, msg):
     headers = {
-        "Authorization": "Bearer " + token,
+        "Authorization": "Bearer " + access_token,
         "Content-Type": "application/x-www-form-urlencoded"
     }
 
@@ -93,7 +95,7 @@ def runprogram() :
 
         else:
             msg = site[i] + 'has Updated '
-            lineNotifyMessage(token, msg)
+            lineNotifyMessage(access_token, msg)
             local_data[site[i]] = remote_hash
 
     # 把更新的雜湊值寫回json檔
