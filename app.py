@@ -4,13 +4,15 @@ from flask import Flask
 import urllib.request
 import json
 import ssl
-
+import time
 import hashlib
-site = ['https://onejav.com/new']
+site = ['https://onejav.com/new', 'https://anime1.me']
 
-"""
+
 import firebase_admin
 from firebase_admin import credentials, firestore
+from bs4 import BeautifulSoup
+
 #Firebase Api Fetch the service account key JSON file contents
 FIREBASE_TOKEN = "Line-notify-50374a349fbb.json"
 cred = credentials.Certificate(FIREBASE_TOKEN)
@@ -18,7 +20,7 @@ default_app = firebase_admin.initialize_app(cred)
 
 # conncect to cloud firestore database
 db = firestore.client()  # conncect to cloud firestore database
-"""
+
 
 message = ''
 access_token = ''
@@ -65,9 +67,25 @@ def runprogram() :
             print("check")
 
         else:
-            msg = site[i] + ' has been updated.'
-            print(access_token)
-            lineNotifyMessage(access_token, msg)
+            if site[i] == 'https://anime1.me' :
+                headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
+                res = requests.get('https://anime1.me', headers=headers)
+                res.encoding = 'utf-8'
+                soup = BeautifulSoup(res.text, 'lxml')
+
+                paragraphs = []
+                for x in soup.find_all("a", string=soup.find('td', {'class': 'column-1'}).text):
+                    paragraphs.append(str(x))
+                str1 = ''.join(paragraphs)
+                url = 'https://anime1.me' + str1.split("\"", 2)[1]
+                msg = soup.find('td', {'class': 'column-1'}).get_text() + "剛剛更新了 " + url
+                lineNotifyMessage(access_token, msg)
+
+            else :
+                msg = site[i] + ' has been updated.'
+                print(access_token)
+                lineNotifyMessage(access_token, msg)
+
             local_data[site[i]] = remote_hash
 
     # 把更新的雜湊值寫回json檔
@@ -118,8 +136,6 @@ def lineNotifyMessage(access_token, msg):
     payload = {'message': msg}
     r = requests.post("https://notify-api.line.me/api/notify", headers=headers, params=payload)
     return r.status_code
-
-
 
 
 if __name__ == "__main__":
