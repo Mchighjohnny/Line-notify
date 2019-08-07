@@ -30,7 +30,6 @@ def run():
 
     params = {'grant_type' : 'authorization_code',
               'code' : code,
-              #'redirect_uri': 'http://2616e35d.ngrok.io',
               'redirect_uri' : 'https://website-line-notify.herokuapp.com/',
               'client_id' : 'zj06EeRm09yneWM35OqLGU',
               'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
