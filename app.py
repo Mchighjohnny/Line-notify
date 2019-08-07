@@ -8,7 +8,7 @@ import json
 import ssl
 
 import hashlib
-site = ['www.google.com.tw']
+site = ['https://www.google.com.tw/']
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
