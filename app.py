@@ -1,19 +1,32 @@
 import requests
 from flask import render_template, request
 from flask import Flask
-
-
 import urllib.request
 import json
 import ssl
 
 import hashlib
-site = ['https://www.google.com.tw/']
+site = ['https://onejav.com/new']
+
+import firebase_admin
+from firebase_admin import credentials, firestore
+#Firebase Api Fetch the service account key JSON file contents
+FIREBASE_TOKEN = "Line-notify-50374a349fbb.json"
+cred = credentials.Certificate(FIREBASE_TOKEN)
+default_app = firebase_admin.initialize_app(cred)
+
+# conncect to cloud firestore database
+db = firestore.client()  # conncect to cloud firestore database
+
+message = ''
+access_token = ''
+
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
 def runprogram() :
 # 檢查json檔案是否存在，若沒有則建立一個
+    global access_token
     print("Already work " )
     try:
         my_file = open('sitechange.json')
@@ -46,12 +59,12 @@ def runprogram() :
         remote_hash = hashlib.md5(remote_data).hexdigest()
 
         if remote_hash == local_data[site[i]]:
-            #msg = 'No updated'
             lineNotifyMessage(access_token, 'findding')
             print("check")
 
         else:
             msg = site[i] + 'has Updated '
+            print(access_token)
             lineNotifyMessage(access_token, msg)
             local_data[site[i]] = remote_hash
 
@@ -68,31 +81,30 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 # 輸入想要追蹤的網址，可以增加或刪除
 
-message = ''
-access_token = ''
+
 
 @app.route('/', methods=['GET'])
 def run():
+  global access_token
   code = request.args.get('code')
   print(code)
   if code is None :
     return render_template('index.html')
   else :
     url = 'https://notify-bot.line.me/oauth/token' ;
-
     params = {'grant_type' : 'authorization_code',
               'code' : code,
               'redirect_uri':'https://website-line-notify.herokuapp.com',
               'client_id' : 'zj06EeRm09yneWM35OqLGU',
               'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
     }
-
-    r = requests.post(url, data = params )
+    r = requests.post(url, data=params)
     data = r.json()
-    access_token = data['access_token'];
-    print(access_token)
+    token = data['access_token'];
+    access_token = token
+    print(data)
     msg = "Success registered"
-    lineNotifyMessage(access_token, msg)
+    lineNotifyMessage(token, msg)
     return render_template('success.html')
 
 def lineNotifyMessage(access_token, msg):
