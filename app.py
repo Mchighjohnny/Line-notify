@@ -30,7 +30,7 @@ def run():
 
     params = {'grant_type' : 'authorization_code',
               'code' : code,
-              'redirect_uri' : 'https://website-line-notify.herokuapp.com/',
+              'redirect_uri':'https://website-line-notify.herokuapp.com',
               'client_id' : 'zj06EeRm09yneWM35OqLGU',
               'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
     }
