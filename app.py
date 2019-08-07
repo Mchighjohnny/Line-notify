@@ -17,19 +17,32 @@ ssl._create_default_https_context = ssl._create_unverified_context
 site = ['https://onejav.com/new']
 
 message = ''
-token = '4r1P16eAjLSEwnWn2VgXTbeY7iRkHhZXCr8myF7vAws'
-
-
+access_token = ''
 
 @app.route('/', methods=['GET'])
-def getdata(name=None):
+def run():
+  code = request.args.get('code')
+  print(code)
+  if code is None :
 
-  return render_template('index.html',name=name)
+    return render_template('index.html')
+  else :
+    url = 'https://notify-bot.line.me/oauth/token' ;
 
-@app.route('/', methods=['POST'])
-def submit():
- name = request.form.get('username')
- return "Hello, "+name
+    params = {'grant_type' : 'authorization_code',
+              'code' : code,
+              'redirect_uri' : 'http://2616e35d.ngrok.io',
+              'client_id' : 'zj06EeRm09yneWM35OqLGU',
+              'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
+    }
+
+    r = requests.post(url, data = params )
+    data = r.json()
+    access_token = data['access_token'];
+    print(access_token)
+
+    return render_template('success.html')
+
 
 def lineNotifyMessage(token, msg):
     headers = {
@@ -75,11 +88,12 @@ def runprogram() :
         remote_hash = hashlib.md5(remote_data).hexdigest()
 
         if remote_hash == local_data[site[i]]:
-            msg = 'No updated'
-            lineNotifyMessage(token, msg)
+            #msg = 'No updated'
+            #lineNotifyMessage(token, msg)
+            print("check")
 
         else:
-            msg = 'Updated'
+            msg = site[i] + 'has Updated '
             lineNotifyMessage(token, msg)
             local_data[site[i]] = remote_hash
 
@@ -91,7 +105,7 @@ def run_schedule():
     while 1:
         schedule.run_pending()
         time.sleep(1)
-        
+
 if __name__ == "__main__":
     schedule.every(1).seconds.do(runprogram)
     t = Thread(target=run_schedule)
