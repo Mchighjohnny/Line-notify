@@ -1,13 +1,14 @@
 import requests
 from flask import render_template, request
 from flask import Flask
-from threading import Thread
+
 
 import urllib.request
 import json
 import ssl
-import time
+
 import hashlib
+site = ['www.google.com.tw']
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -66,7 +67,6 @@ app = Flask(__name__)
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # 輸入想要追蹤的網址，可以增加或刪除
-site = ['www.google.com.tw']
 
 message = ''
 access_token = ''
