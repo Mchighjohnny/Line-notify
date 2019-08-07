@@ -60,7 +60,9 @@ def runprogram() :
 
     # 讀入相關網址，並找出其雜湊值，與已儲存的雜湊值進行對比
     for i in range(len(site)):
-        remote_data = urllib.request.urlopen(site[i]).read()
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0'}
+        req = urllib.request.Request(url=site[i], headers=headers)
+        remote_data = urllib.request.urlopen(req).read()
         remote_hash = hashlib.md5(remote_data).hexdigest()
 
         if remote_hash == local_data[site[i]]:
@@ -69,8 +71,8 @@ def runprogram() :
 
         else:
             if site[i] == 'https://anime1.me' :
-                headers = {'user-agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36'}
-                res = requests.get('https://anime1.me', headers=headers)
+                headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+                res = requests.get(site[i], headers=headers)
                 res.encoding = 'utf-8'
                 soup = BeautifulSoup(res.text, 'lxml')
 
