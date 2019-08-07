@@ -64,6 +64,7 @@ def runprogram() :
         req = urllib.request.Request(url=site[i], headers=headers)
         remote_data = urllib.request.urlopen(req).read()
         remote_hash = hashlib.md5(remote_data).hexdigest()
+        print("check" +  site[i] )
 
         if remote_hash == local_data[site[i]]:
             #lineNotifyMessage(access_token, 'findding')
