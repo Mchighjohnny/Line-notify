@@ -30,3 +30,6 @@ message = 'hello'
 token = '4r1P16eAjLSEwnWn2VgXTbeY7iRkHhZXCr8myF7vAws'
 
 lineNotifyMessage(token, message)
+
+if __name__ == "__main__":
+    app.run()
