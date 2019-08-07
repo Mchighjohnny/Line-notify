@@ -89,7 +89,7 @@ def runprogram() :
 
         if remote_hash == local_data[site[i]]:
             #msg = 'No updated'
-            #lineNotifyMessage(token, msg)
+            lineNotifyMessage(access_token, 'findding')
             print("check")
 
         else:
