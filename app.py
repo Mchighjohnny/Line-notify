@@ -6,53 +6,10 @@ from threading import Thread
 import urllib.request
 import json
 import ssl
-import schedule
 import time
 import hashlib
 
-app = Flask(__name__)
-ssl._create_default_https_context = ssl._create_unverified_context
-
-# 輸入想要追蹤的網址，可以增加或刪除
-site = ['www.google.com.tw']
-
-message = ''
-access_token = ''
-
-@app.route('/', methods=['GET'])
-def run():
-  code = request.args.get('code')
-  print(code)
-  if code is None :
-    return render_template('index.html')
-  else :
-    url = 'https://notify-bot.line.me/oauth/token' ;
-
-    params = {'grant_type' : 'authorization_code',
-              'code' : code,
-              'redirect_uri':'https://website-line-notify.herokuapp.com',
-              'client_id' : 'zj06EeRm09yneWM35OqLGU',
-              'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
-    }
-
-    r = requests.post(url, data = params )
-    data = r.json()
-    access_token = data['access_token'];
-    print(access_token)
-    msg = "Success registered"
-    lineNotifyMessage(access_token, msg)
-    return render_template('success.html')
-
-
-def lineNotifyMessage(access_token, msg):
-    headers = {
-        "Authorization": "Bearer " + access_token,
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-
-    payload = {'message': msg}
-    r = requests.post("https://notify-api.line.me/api/notify", headers=headers, params=payload)
-    return r.status_code
+from apscheduler.schedulers.background import BackgroundScheduler
 
 def runprogram() :
 # 檢查json檔案是否存在，若沒有則建立一個
@@ -101,14 +58,56 @@ def runprogram() :
     with open('sitechange.json', 'w') as outfile:
         json.dump(local_data, outfile, ensure_ascii=False)
 
-def run_schedule():
-    while 1:
-        schedule.run_pending()
-        time.sleep(1)
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(runprogram,'interval',seconds=10)
+sched.start()
+
+app = Flask(__name__)
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# 輸入想要追蹤的網址，可以增加或刪除
+site = ['www.google.com.tw']
+
+message = ''
+access_token = ''
+
+@app.route('/', methods=['GET'])
+def run():
+  code = request.args.get('code')
+  print(code)
+  if code is None :
+    return render_template('index.html')
+  else :
+    url = 'https://notify-bot.line.me/oauth/token' ;
+
+    params = {'grant_type' : 'authorization_code',
+              'code' : code,
+              'redirect_uri':'https://website-line-notify.herokuapp.com',
+              'client_id' : 'zj06EeRm09yneWM35OqLGU',
+              'client_secret' : 'KL2ajPTxQo3vwGtoWOHB3jL78hhazkgmadHemrWbxjr'
+    }
+
+    r = requests.post(url, data = params )
+    data = r.json()
+    access_token = data['access_token'];
+    print(access_token)
+    msg = "Success registered"
+    lineNotifyMessage(access_token, msg)
+    return render_template('success.html')
+
+def lineNotifyMessage(access_token, msg):
+    headers = {
+        "Authorization": "Bearer " + access_token,
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    payload = {'message': msg}
+    r = requests.post("https://notify-api.line.me/api/notify", headers=headers, params=payload)
+    return r.status_code
+
+
+
 
 if __name__ == "__main__":
-    schedule.every(1).seconds.do(runprogram)
-    t = Thread(target=run_schedule)
-    t.start()
     app.run()
 
