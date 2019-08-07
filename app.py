@@ -1,20 +1,35 @@
 import requests
-import request
-from flask import render_template
-
+from flask import render_template, request
 from flask import Flask
+from threading import Thread
+
+import urllib.request
+import json
+import ssl
+import schedule
+import time
+import hashlib
+
 app = Flask(__name__)
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# 輸入想要追蹤的網址，可以增加或刪除
+site = ['https://onejav.com/new']
+
+message = ''
+token = '4r1P16eAjLSEwnWn2VgXTbeY7iRkHhZXCr8myF7vAws'
+
 
 
 @app.route('/', methods=['GET'])
-def getdata():
-  return render_template('index.html')
+def getdata(name=None):
 
-@app.route('/say_hello', methods=['POST'])
+  return render_template('index.html',name=name)
+
+@app.route('/', methods=['POST'])
 def submit():
  name = request.form.get('username')
  return "Hello, "+name
-
 
 def lineNotifyMessage(token, msg):
     headers = {
@@ -26,13 +41,60 @@ def lineNotifyMessage(token, msg):
     r = requests.post("https://notify-api.line.me/api/notify", headers=headers, params=payload)
     return r.status_code
 
+def runprogram() :
+# 檢查json檔案是否存在，若沒有則建立一個
+    print("Already work " )
+    try:
+        my_file = open('sitechange.json')
+    except IOError:
+        data = {}
+        with open('sitechange.json', 'w') as outfile:
+            json.dump(data, outfile, ensure_ascii=False)
 
-# 修改為你要傳送的訊息內容
-message = 'hello'
-# 修改為你的權杖內容
-token = '4r1P16eAjLSEwnWn2VgXTbeY7iRkHhZXCr8myF7vAws'
+    # 開啟json檔案，讀入資料
+    with open("sitechange.json") as infile:
+        data = infile.read()
+        local_data = json.loads(data)
 
-lineNotifyMessage(token, message)
+    # 檢查json檔中是否有相關網址紀錄，若沒有則建立一個
+    for i in range(len(site)):
+        if site[i] not in local_data:
+            local_data[site[i]] = ""
 
+    # 若用戶刪除網址紀錄，則更新json檔
+    temp = local_data.copy()
+    for i in local_data.keys():
+        if i not in site:
+            temp.pop(i)
+
+    local_data = temp
+
+    # 讀入相關網址，並找出其雜湊值，與已儲存的雜湊值進行對比
+    for i in range(len(site)):
+        remote_data = urllib.request.urlopen(site[i]).read()
+        remote_hash = hashlib.md5(remote_data).hexdigest()
+
+        if remote_hash == local_data[site[i]]:
+            msg = 'No updated'
+            lineNotifyMessage(token, msg)
+
+        else:
+            msg = 'Updated'
+            lineNotifyMessage(token, msg)
+            local_data[site[i]] = remote_hash
+
+    # 把更新的雜湊值寫回json檔
+    with open('sitechange.json', 'w') as outfile:
+        json.dump(local_data, outfile, ensure_ascii=False)
+
+def run_schedule():
+    while 1:
+        schedule.run_pending()
+        time.sleep(1)
+        
 if __name__ == "__main__":
+    schedule.every(1).seconds.do(runprogram)
+    t = Thread(target=run_schedule)
+    t.start()
     app.run()
+

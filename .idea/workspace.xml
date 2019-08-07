@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d65f506d-ed91-4367-8db0-b6e129485086" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,7 +40,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.dig">
+  <component name="RunManager" selected="Python.app">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Line-notify" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -83,8 +85,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.dig" />
         <item itemvalue="Python.app" />
+        <item itemvalue="Python.dig" />
       </list>
     </recent_temporary>
   </component>
