@@ -1,16 +1,19 @@
 import requests
+import request
+from flask import render_template
 
 from flask import Flask
 app = Flask(__name__)
 
 
-@app.route('/')
-def hello_world():
-  return 'Hello, World!'
+@app.route('/', methods=['GET'])
+def getdata():
+  return render_template('index.html')
 
-@app.route('/test')
-def test_page():
-    return 'In test page!'
+@app.route('/say_hello', methods=['POST'])
+def submit():
+ name = request.form.get('username')
+ return "Hello, "+name
 
 
 def lineNotifyMessage(token, msg):
