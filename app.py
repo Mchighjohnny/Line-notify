@@ -8,10 +8,11 @@ import time
 import hashlib
 site = ['https://onejav.com/new', 'https://anime1.me']
 
+from bs4 import BeautifulSoup
 
+"""
 import firebase_admin
 from firebase_admin import credentials, firestore
-from bs4 import BeautifulSoup
 
 #Firebase Api Fetch the service account key JSON file contents
 FIREBASE_TOKEN = "Line-notify-50374a349fbb.json"
@@ -20,7 +21,7 @@ default_app = firebase_admin.initialize_app(cred)
 
 # conncect to cloud firestore database
 db = firestore.client()  # conncect to cloud firestore database
-
+"""
 
 message = ''
 access_token = ''
