@@ -65,7 +65,7 @@ def runprogram() :
             print("check")
 
         else:
-            msg = site[i] + 'has Updated '
+            msg = site[i] + ' has been updated.'
             print(access_token)
             lineNotifyMessage(access_token, msg)
             local_data[site[i]] = remote_hash
