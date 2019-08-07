@@ -8,6 +8,7 @@ import ssl
 import hashlib
 site = ['https://onejav.com/new']
 
+"""
 import firebase_admin
 from firebase_admin import credentials, firestore
 #Firebase Api Fetch the service account key JSON file contents
@@ -17,6 +18,7 @@ default_app = firebase_admin.initialize_app(cred)
 
 # conncect to cloud firestore database
 db = firestore.client()  # conncect to cloud firestore database
+"""
 
 message = ''
 access_token = ''
@@ -59,7 +61,7 @@ def runprogram() :
         remote_hash = hashlib.md5(remote_data).hexdigest()
 
         if remote_hash == local_data[site[i]]:
-            lineNotifyMessage(access_token, 'findding')
+            #lineNotifyMessage(access_token, 'findding')
             print("check")
 
         else:
