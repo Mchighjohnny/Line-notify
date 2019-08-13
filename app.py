@@ -6,11 +6,11 @@ import json
 import ssl
 import time
 import hashlib
-site = ['https://onejav.com/new', 'https://anime1.me']
+site = ['', 'https://anime1.me']
 
 from bs4 import BeautifulSoup
 
-"""
+""" adding multiple users
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -31,6 +31,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 def runprogram() :
 # 檢查json檔案是否存在，若沒有則建立一個
+
+
     global access_token
     print("Already work " )
     try:
@@ -105,7 +107,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 # 輸入想要追蹤的網址，可以增加或刪除
 
-
+#pretend heroku sleep
+#@app.route( '/not-stop', methods=['POST'])
 
 @app.route('/', methods=['GET'])
 def run():
